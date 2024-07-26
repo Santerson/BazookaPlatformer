@@ -46,34 +46,42 @@ public class CameraLocking : MonoBehaviour
         if (xRecoil == 0) MaxRecoil.x = 0;
         if (yRecoil == 0) MaxRecoil.y = 0;
 
+        Vector2 movementForce = Vector2.zero;
+
         //Calculate if the player is off screen, and if so, apply a force to pull the camera with the player
         if (yDiff > 5)
         {
-            RefCameraRb.AddForce(new Vector2(0, yScrollSpeed));//up
+            movementForce += Vector2.up;
             ScrollingDirection += Vector2.up;
             Scrolling = true;
         }
         else if (yDiff < -5)
         {
-            RefCameraRb.AddForce(new Vector2(0, -yScrollSpeed)); //down
+            movementForce += Vector2.down;
             ScrollingDirection += Vector2.down;
             Scrolling = true;
 
         }
-        if (xDiff > 9)
+        if (xDiff > 9.3)
         {
-            RefCameraRb.AddForce(new Vector2(xScrollSpeed, 0)); //right
+            movementForce += Vector2.right;
             ScrollingDirection += Vector2.right;
             Scrolling = true;
 
         }
-        else if (xDiff < -9)
+        else if (xDiff < -9.3)
         {
-            RefCameraRb.AddForce(new Vector2(-xScrollSpeed, 0)); //left
+            movementForce += Vector2.left;
             ScrollingDirection += Vector2.left;
             Scrolling = true;
 
         }
+
+        movementForce.Normalize();
+        movementForce = new Vector2(movementForce.x * xScrollSpeed, movementForce.y * yScrollSpeed);
+        RefCameraRb.AddForce(movementForce);
+        if (RefCameraRb.velocity.x > xScrollSpeed || (RefCameraRb.velocity.x != 0 && RefCameraRb.velocity.y == 0)) RefCameraRb.velocity = new Vector2(RefCameraRb.velocity.normalized.x * xScrollSpeed, RefCameraRb.velocity.y);
+        if (RefCameraRb.velocity.y > yScrollSpeed || (RefCameraRb.velocity.y != 0 && RefCameraRb.velocity.x == 0)) RefCameraRb.velocity = new Vector2(RefCameraRb.velocity.x, RefCameraRb.velocity.normalized.y * yScrollSpeed);
 
         /*
         (This is a big if loop, so i will try my best to explain it)
@@ -92,7 +100,7 @@ public class CameraLocking : MonoBehaviour
             IsInRange(Mathf.Abs(cameraPosition.x) % 18.0f, 17.7f * (1 + MaxRecoil.x / 100), 18.1f * (1 + MaxRecoil.x / 100))) &&
             (IsInRange(cameraPosition.y % 10.0f, -0.5f * (1 + MaxRecoil.y / 100), 0.5f * (1 + MaxRecoil.y / 100)) ||
             IsInRange(Mathf.Abs(cameraPosition.y) % 10.0f, 9.5f * (1 + MaxRecoil.y / 100), 10.1f * (1 + MaxRecoil.y / 100))) &&
-            xDiff < 8 && xDiff > -8 && yDiff < 4 && yDiff > -5)
+            xDiff < 9 && xDiff > -9 && yDiff < 5 && yDiff > -5)
         {
             LockTheCamera(cameraPosition);
             

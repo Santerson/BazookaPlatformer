@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Bazooka : MonoBehaviour
 {
+    [SerializeField] GameObject BulletPrefab;
     [Tooltip("The base launch speed")]
     [SerializeField] float Recoil = 10;
     [Tooltip("The rate at which the player slows down after a launch")]
@@ -19,8 +20,10 @@ public class Bazooka : MonoBehaviour
     [SerializeField] float ShootCooldown = 3f;
     [Tooltip("When the player moves their mouse, the bazooka will turn to face the mouse. This determines how fast that rotation is.")]
     [SerializeField] float RotateSpeed = 100f;
-    //[SerializeField] TextMeshProUGUI ReloadText;
-    //float ShotReadyIn = 0f;
+    [SerializeField] TextMeshProUGUI ReloadText;
+    [Tooltip("Whether or not the player starts with the bazooka, (good for debugging, should be off by default)")]
+    [SerializeField] bool PlayerHasBazooka = false;
+    float ShotReadyIn = 0f;
     public float XRecoil = 0;
     public float YRecoil = 0;
     // Start is called before the first frame update
@@ -33,7 +36,7 @@ public class Bazooka : MonoBehaviour
     }
     void Start()
     {
-        
+        //Debug.Log(SUtilities.SetNumberOfDecimals(3.2131f, 2));
     }
 
     // Update is called once per frame
@@ -44,13 +47,24 @@ public class Bazooka : MonoBehaviour
         Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 10));
         
         //Reducing shot cooldown
-        //shootCooldown();
-
-        //Checking if mouse is down
-        if (Input.GetMouseButtonDown(0)  /*ShotReadyIn <= 0*/)
+        shootCooldown();
+        /*
+        if (!PlayerHasBazooka)
         {
-            //ShotReadyIn = ShootCooldown;
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
+        */
+        //Checking if mouse is down, shot is ready, player has the bazooka, and the cursor isn't over the player
+        if (Input.GetMouseButtonDown(0) && ShotReadyIn <= 0 /*&& PlayerHasBazooka*/ && !SUtilities.IsInRange(FindObjectOfType<Crossair>().transform.position,
+            new Vector2(transform.position.x - 0.5f, transform.position.y - 0.5f), new Vector2(transform.position.x + 0.5f, transform.position.y + 0.5f)))
+        {
+            ShotReadyIn = ShootCooldown;
             CreateRecoil(-mouseWorldPosition); //We use negative to launch the player the opposite direciton
+            Instantiate(BulletPrefab, transform.position, Quaternion.identity);
         }
         ApplyRecoil();
         RotateToMouse(mouseWorldPosition);
@@ -113,19 +127,22 @@ public class Bazooka : MonoBehaviour
         }
     }
 
-   /*
     private void shootCooldown()
     {
         if (ReloadText == null) return;
-        //if (ShotReadyIn > 0f) ShotReadyIn -= Time.deltaTime;
+        if (ShotReadyIn > 0f) ShotReadyIn -= Time.deltaTime;
         ReloadText.color = Color.red;
         if (ShotReadyIn <= 0f)
         {
             ReloadText.color = Color.green;
         }
-        ReloadText.text = $"Reloading: {ShotReadyIn}s left";
+        ReloadText.text = $"Reloading: {ShotReadyIn:#0.0}s left";
         
         
     }
-    */
+
+    public void ActivateBazooka()
+    {
+        PlayerHasBazooka = true;
+    }
 }
