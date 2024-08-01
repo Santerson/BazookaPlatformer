@@ -48,7 +48,7 @@ public class CameraLocking : MonoBehaviour
 
         Vector2 movementForce = Vector2.zero;
 
-        Debug.Log(xDiff + ", " + yDiff);
+        //Debug.Log(xDiff + ", " + yDiff);
 
         //Calculate if the player is off screen, and if so, apply a force to pull the camera with the player
         if (yDiff > 5)
@@ -105,9 +105,9 @@ public class CameraLocking : MonoBehaviour
         We also check if the player is not on the edges of the screen to where the screen, instead of being stopped, should
         be getting pulled.
         */
-        if ((IsInRange(cameraPosition.x % 18.0f, -0.3f * (1 + MaxRecoil.x / 100), 0.3f * (1 + MaxRecoil.x / 100)) ||
-            IsInRange(Mathf.Abs(cameraPosition.x) % 18.0f, 17.7f * (1 + MaxRecoil.x / 100), 18.1f * (1 + MaxRecoil.x / 100))) &&
-            (IsInRange(cameraPosition.y % 10.0f, -0.5f * (1 + MaxRecoil.y / 100), 0.5f * (1 + MaxRecoil.y / 100)) ||
+        if ((IsInRange(cameraPosition.x % 18.0f, -0.5f * (1 + MaxRecoil.x / 100), 0.5f * (1 + MaxRecoil.x / 100)) ||
+            IsInRange(Mathf.Abs(cameraPosition.x) % 18.0f, 17.5f * (1 + MaxRecoil.x / 100), 18.1f * (1 + MaxRecoil.x / 100))) &&
+            (IsInRange(cameraPosition.y % 10.0f, -0.7f * (1 + MaxRecoil.y / 100), 0.7f * (1 + MaxRecoil.y / 100)) ||
             IsInRange(Mathf.Abs(cameraPosition.y) % 10.0f, 9.5f * (1 + MaxRecoil.y / 100), 10.1f * (1 + MaxRecoil.y / 100))) &&
             xDiff < 9 && xDiff > -9 && yDiff < 5 && yDiff > -5)
         {

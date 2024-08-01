@@ -12,5 +12,6 @@ public class BazookaPickup : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         PlayerBazooka.ActivateBazooka();
+        Destroy(gameObject);
     }
 }

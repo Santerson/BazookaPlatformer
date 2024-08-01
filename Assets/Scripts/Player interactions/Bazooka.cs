@@ -31,7 +31,7 @@ public class Bazooka : MonoBehaviour
     private void Awake()
     {
         if (ShootParticles == null) Debug.LogError("No shootParticles found! (Check the bazooka serializeFields!)");
-        //if (ReloadText == null) Debug.LogError("No ReloadText found! (Check bazooka serializeFields!)");
+        if (ReloadText == null) Debug.LogError("No ReloadText found! (Check bazooka serializeFields!)");
 
     }
     void Start()
@@ -48,18 +48,9 @@ public class Bazooka : MonoBehaviour
         
         //Reducing shot cooldown
         shootCooldown();
-        /*
-        if (!PlayerHasBazooka)
-        {
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.SetActive(true);
-        }
-        */
+
         //Checking if mouse is down, shot is ready, player has the bazooka, and the cursor isn't over the player
-        if (Input.GetMouseButtonDown(0) && ShotReadyIn <= 0 /*&& PlayerHasBazooka*/ && !SUtilities.IsInRange(FindObjectOfType<Crossair>().transform.position,
+        if (Input.GetMouseButtonDown(0) && ShotReadyIn <= 0 && PlayerHasBazooka && !SUtilities.IsInRange(FindObjectOfType<Crossair>().transform.position,
             new Vector2(transform.position.x - 0.5f, transform.position.y - 0.5f), new Vector2(transform.position.x + 0.5f, transform.position.y + 0.5f)))
         {
             ShotReadyIn = ShootCooldown;

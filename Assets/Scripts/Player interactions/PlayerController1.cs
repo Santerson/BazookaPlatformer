@@ -122,6 +122,10 @@ public class PlayerPhysicsController : MonoBehaviour
             //Checks if the player is legally considered grounded using the GroundedGraceDistnace AND is going downward
             if (IsGrounded(hit))JumpsLeft = ExtraJumpCount + 1;
         }
+        else
+        {
+            JumpsLeft = 0;
+        }
 
         //If the jump key is pressed AND player has jumps left
         if (Input.GetKeyDown(KeyBindJump) && JumpsLeft > 0)
