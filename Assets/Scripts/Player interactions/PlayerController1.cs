@@ -40,6 +40,7 @@ public class PlayerPhysicsController : MonoBehaviour
     [Tooltip("The tag surfaces must need to be able to reset the jumps of the player. IF THE JUMPS ARE NOT RESETTING, THIS IS PROBABLY WHY")]
     [SerializeField] string NoJumpResetTag;
     int JumpsLeft = 0;
+    Vector2 RespawnLocation = new Vector2(-5.84f, -3f); // SpawnLocation
 
 
     void Awake()
@@ -60,6 +61,10 @@ public class PlayerPhysicsController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RespawnPlayer();
+        }
         UpdateMovement();
         UpdateJump();
     }
@@ -76,7 +81,7 @@ public class PlayerPhysicsController : MonoBehaviour
         if (Input.GetKey(KeyCode.D)) { inputVector.x += 1; } //Right
         inputVector.Normalize();
         // Accelerate the player using our max allowed move force.
-        RefRigidbody.AddForce(inputVector * MoveForce);
+        RefRigidbody.AddForce(inputVector * MoveForce * (Time.deltaTime * 600));
         // Clamp the maximum velocity to our defined cap.
         if ((RefRigidbody.velocity.magnitude - Mathf.Abs(RefRigidbody.velocity.y)) > MaxVelocity)
         {
@@ -91,7 +96,7 @@ public class PlayerPhysicsController : MonoBehaviour
             // Quickly damp the movement when we let go of the inputs by multiplying the vector
             // by a value less than one each frame.
             float verticalComponent = RefRigidbody.velocity.y;
-            RefRigidbody.velocity *= DampingCoefficient;
+            RefRigidbody.velocity *= DampingCoefficient * Time.deltaTime;
             RefRigidbody.velocity = new Vector2(RefRigidbody.velocity.x, verticalComponent);
         }
         
@@ -129,6 +134,16 @@ public class PlayerPhysicsController : MonoBehaviour
         }
         
 
+    }
+
+    void RespawnPlayer()
+    {
+        transform.position = RespawnLocation;
+        RefRigidbody.velocity = Vector2.zero;
+        FindObjectOfType<Bazooka>().XRecoil = 0;
+        FindObjectOfType<Bazooka>().YRecoil = 0;
+        Camera.main.transform.position = new Vector3(RespawnLocation.x, RespawnLocation.y, -10);
+        FindObjectOfType<CameraLocking>().LockTheCamera(Camera.main.transform.position);
     }
 
     /// <summary>

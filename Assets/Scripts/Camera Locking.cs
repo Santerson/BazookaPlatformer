@@ -48,6 +48,8 @@ public class CameraLocking : MonoBehaviour
 
         Vector2 movementForce = Vector2.zero;
 
+        Debug.Log(xDiff + ", " + yDiff);
+
         //Calculate if the player is off screen, and if so, apply a force to pull the camera with the player
         if (yDiff > 5)
         {
@@ -116,6 +118,7 @@ public class CameraLocking : MonoBehaviour
 
     private void CheckIfCameraOffset(Vector3 cameraPos, float xDiff, float yDiff)
     {
+        
 
         //Debug.Log($"Camera % 18 = {Mathf.Abs(cameraPos.x % 18)}, LLoop = {LLoop} , RLoop = {RLoop}, ULoop = {ULoop} , DLoop = {DLoop}");
         if (ScrollingDirection.x > 0)
@@ -218,7 +221,7 @@ public class CameraLocking : MonoBehaviour
         }
     }
 
-    private void LockTheCamera(Vector3 cameraPos)
+    public void LockTheCamera(Vector3 cameraPos)
     {
         //Debug.Log("Locking");
         //Stops the camera and resets the max recoil
