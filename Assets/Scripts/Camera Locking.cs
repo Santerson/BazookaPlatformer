@@ -81,10 +81,17 @@ public class CameraLocking : MonoBehaviour
 
         movementForce.Normalize();
         movementForce = new Vector2(movementForce.x * xScrollSpeed, movementForce.y * yScrollSpeed);
-        RefCameraRb.AddForce(movementForce);
-        if (RefCameraRb.velocity.x > xScrollSpeed || (RefCameraRb.velocity.x != 0 && RefCameraRb.velocity.y == 0)) RefCameraRb.velocity = new Vector2(RefCameraRb.velocity.normalized.x * xScrollSpeed, RefCameraRb.velocity.y);
-        if (RefCameraRb.velocity.y > yScrollSpeed || (RefCameraRb.velocity.y != 0 && RefCameraRb.velocity.x == 0)) RefCameraRb.velocity = new Vector2(RefCameraRb.velocity.x, RefCameraRb.velocity.normalized.y * yScrollSpeed);
 
+        if (movementForce.magnitude != 0)
+            RefCameraRb.velocity = movementForce;
+
+        RefCameraRb.AddForce(movementForce);
+        /*
+        if (RefCameraRb.velocity.x != 0 && RefCameraRb.velocity.y == 0) 
+            RefCameraRb.velocity = new Vector2(RefCameraRb.velocity.normalized.x * xScrollSpeed, RefCameraRb.velocity.y);
+        if (RefCameraRb.velocity.y > yScrollSpeed || (RefCameraRb.velocity.y != 0 && RefCameraRb.velocity.x == 0)) 
+            RefCameraRb.velocity = new Vector2(RefCameraRb.velocity.x, RefCameraRb.velocity.normalized.y * yScrollSpeed);
+        */
         /*
         (This is a big if loop, so i will try my best to explain it)
         We check if the camera's position is in a position to latch, this being a multiple of 18 on the x and 10 on the y
