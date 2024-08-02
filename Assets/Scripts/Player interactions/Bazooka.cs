@@ -23,6 +23,8 @@ public class Bazooka : MonoBehaviour
     [SerializeField] TextMeshProUGUI ReloadText;
     [Tooltip("Whether or not the player starts with the bazooka, (good for debugging, should be off by default)")]
     [SerializeField] bool PlayerHasBazooka = false;
+    
+
     float ShotReadyIn = 0f;
     public float XRecoil = 0;
     public float YRecoil = 0;
@@ -36,12 +38,14 @@ public class Bazooka : MonoBehaviour
     }
     void Start()
     {
-        //Debug.Log(SUtilities.SetNumberOfDecimals(3.2131f, 2));
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+
         //Getting mouse world position
         Vector2 mouse = Input.mousePosition;
         Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 10));
@@ -81,13 +85,39 @@ public class Bazooka : MonoBehaviour
 
     void ApplyRecoil()
     {
-        FindObjectOfType<PlayerPhysicsController>().GetComponent<Rigidbody2D>().AddForce(new Vector2(XRecoil, YRecoil));
-        float frameDiff = Time.deltaTime * 100;
-        if (XRecoil > 0) { XRecoil -= RecoilDecay * frameDiff; }
-        if (XRecoil < 0) { XRecoil += RecoilDecay * frameDiff; }
+        Debug.Log("XRecoil: " + XRecoil + ", YRecoil" + YRecoil);
+        float frameDiff = Time.deltaTime * 300;
+        FindObjectOfType<PlayerPhysicsController>().GetComponent<Rigidbody2D>().AddForce(new Vector2(XRecoil * frameDiff, YRecoil * frameDiff));
+
+        if (XRecoil > 0) { 
+            XRecoil -= RecoilDecay * frameDiff;
+            if (XRecoil < 0)
+            {
+                XRecoil = 0;
+            }
+        }
+        if (XRecoil < 0) { 
+            XRecoil += RecoilDecay * frameDiff ;
+            if (XRecoil > 0)
+            {
+                XRecoil = 0;
+            }
+        }
         if (Mathf.Abs(XRecoil) < RecoilDecay) {XRecoil = 0;}
-        if (YRecoil > 0) { YRecoil -= RecoilDecay * 3 * frameDiff; }
-        if (YRecoil < 0) { YRecoil += RecoilDecay * 3 * frameDiff;}
+        if (YRecoil > 0) { 
+            YRecoil -= RecoilDecay * 3 * frameDiff;
+            if (YRecoil < 0)
+            {
+                YRecoil = 0;
+            }
+        }
+        if (YRecoil < 0) { 
+            YRecoil += RecoilDecay * 3 * frameDiff;
+            if (YRecoil > 0)
+            {
+                YRecoil = 0;
+            }
+        }
         if (Mathf.Abs(YRecoil) < RecoilDecay * 3) {YRecoil = 0;}
         
     }
