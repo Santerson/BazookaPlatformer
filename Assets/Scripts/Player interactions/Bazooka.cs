@@ -23,8 +23,13 @@ public class Bazooka : MonoBehaviour
     [SerializeField] TextMeshProUGUI ReloadText;
     [Tooltip("Whether or not the player starts with the bazooka, (good for debugging, should be off by default)")]
     [SerializeField] bool PlayerHasBazooka = false;
-    
+    [SerializeField] float StrongFireThreshold = 0.4f;
+    [SerializeField] float StrongFireMultiplier = 2f;
 
+    [SerializeField] AudioSource SFXShoot;
+    [SerializeField] AudioSource SFXStrongShoot;
+
+    float TimeSinceLastShot = 0f;
     float ShotReadyIn = 0f;
     public float XRecoil = 0;
     public float YRecoil = 0;
@@ -36,29 +41,34 @@ public class Bazooka : MonoBehaviour
         if (ReloadText == null) Debug.LogError("No ReloadText found! (Check bazooka serializeFields!)");
 
     }
-    void Start()
-    {
-
-    }
 
     // Update is called once per frame
     void Update()
     {
-        
-
         //Getting mouse world position
         Vector2 mouse = Input.mousePosition;
         Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 10));
         
         //Reducing shot cooldown
         shootCooldown();
+        TimeSinceLastShot += Time.deltaTime;
 
         //Checking if mouse is down, shot is ready, player has the bazooka, and the cursor isn't over the player
         if (Input.GetMouseButtonDown(0) && ShotReadyIn <= 0 && PlayerHasBazooka && !SUtilities.IsInRange(FindObjectOfType<Crossair>().transform.position,
             new Vector2(transform.position.x - 0.5f, transform.position.y - 0.5f), new Vector2(transform.position.x + 0.5f, transform.position.y + 0.5f)))
         {
+            if (TimeSinceLastShot  < StrongFireThreshold + ShootCooldown)
+            {
+                PlaySFX(SFXStrongShoot);
+                CreateRecoil(-mouseWorldPosition, HorizontalLaunchMultiplier * StrongFireMultiplier, VerticalLaunchMultiplier * StrongFireMultiplier); //We use negative to launch the player the opposite direciton
+            }
+            else
+            {
+                PlaySFX(SFXShoot);
+                CreateRecoil(-mouseWorldPosition, HorizontalLaunchMultiplier, VerticalLaunchMultiplier); //We use negative to launch the player the opposite direciton
+            }
             ShotReadyIn = ShootCooldown;
-            CreateRecoil(-mouseWorldPosition); //We use negative to launch the player the opposite direciton
+            TimeSinceLastShot = 0;
             Instantiate(BulletPrefab, transform.position, Quaternion.identity);
         }
         ApplyRecoil();
@@ -67,7 +77,7 @@ public class Bazooka : MonoBehaviour
 
     }
 
-    void CreateRecoil(Vector3 mousePos)
+    void CreateRecoil(Vector3 mousePos, float HorizontalLaunchMultiplier, float VerticalLaunchMultiplier)
     {
         //Get the x and y cordinates of the mouse
         float mouseXPos = mousePos.x;
@@ -165,5 +175,21 @@ public class Bazooka : MonoBehaviour
     public void ActivateBazooka()
     {
         PlayerHasBazooka = true;
+    }
+
+    /// <summary>
+    /// Plays a sound effect
+    /// </summary>
+    /// <param name="SFX">The sound effect (duh)</param>
+    private void PlaySFX(AudioSource SFX)
+    {
+        try
+        {
+            SFX.Play();
+        }
+        catch
+        {
+            Debug.LogError("No Audio Source found!");
+        }
     }
 }
